@@ -1,8 +1,21 @@
 package com.example.demo.filter.token;
 
-public class AuthorizationTokenIdentifier {
+/**
+ * Data returned after project login without login-client-app.
+ * 
+ * @author cesar.fagundes
+ *
+ */
+public class TokensDTO {
 
+	/**
+	 * token for home bank. 
+	 */
 	private String authorizationHB;
+	
+	/**
+	 * token for M18. 
+	 */
 	private String authorizationM18;
 
 	public String getAuthorizationHB() {
