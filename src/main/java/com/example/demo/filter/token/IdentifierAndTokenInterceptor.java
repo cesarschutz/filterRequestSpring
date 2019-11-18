@@ -12,6 +12,12 @@ import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+/**
+ * Interceptor to query tokens.
+ *  
+ * @author cesar.fagundes
+ *
+ */
 @Component
 public class IdentifierAndTokenInterceptor extends HandlerInterceptorAdapter {
 
