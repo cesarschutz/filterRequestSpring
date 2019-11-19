@@ -37,10 +37,7 @@ public class IdentifierAndTokenInterceptor extends HandlerInterceptorAdapter {
 		//get identifier in request
 		Map<String, Object> pathVariables = (Map<String, Object>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 		String identifier = (String) pathVariables.get("identifier");
-		
-		//valid identifier and authorization
-		validateIdentifierAndAuthorizationRequest(authorization, identifier);
-		
+
 		//get Tokens in srm-login-client-app
 		TokensDTO tokens = getTokens(authorization, identifier);
 		
@@ -50,14 +47,10 @@ public class IdentifierAndTokenInterceptor extends HandlerInterceptorAdapter {
 		return super.preHandle(request, response, handler);
 	}
 	
-	private void validateIdentifierAndAuthorizationRequest(String authorization, String identifier) throws Exception {
-		if (StringUtils.isEmpty(authorization) || StringUtils.isEmpty(identifier)
-				|| StringUtils.containsWhitespace(authorization) || StringUtils.containsWhitespace(identifier)){
-			throw new Exception();
-		}
-	}
-	
-	private TokensDTO getTokens(String authorization, String identifier) {
+	private TokensDTO getTokens(String authorization, String identifier) throws Exception {
+		//valid identifier and authorization
+		validateIdentifierAndAuthorizationRequest(authorization, identifier);
+		
 		TokensDTO authorizationTokenIdentifierDTO = new TokensDTO();
 		
 		//TODO chamar srm-login-client-app
@@ -66,6 +59,13 @@ public class IdentifierAndTokenInterceptor extends HandlerInterceptorAdapter {
 		authorizationTokenIdentifierDTO.setAuthorizationHB("authorizationHB");
 		authorizationTokenIdentifierDTO.setAuthorizationM18("authorizationM18");
 		return authorizationTokenIdentifierDTO;
+	}
+	
+	private void validateIdentifierAndAuthorizationRequest(String authorization, String identifier) throws Exception {
+		if (StringUtils.isEmpty(authorization) || StringUtils.isEmpty(identifier)
+				|| StringUtils.containsWhitespace(authorization) || StringUtils.containsWhitespace(identifier)){
+			throw new Exception();
+		}
 	}
 	
 	@Override
