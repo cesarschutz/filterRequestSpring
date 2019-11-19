@@ -1,5 +1,6 @@
 package com.example.demo.filter.token;
 
+import java.lang.reflect.Parameter;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +27,7 @@ public class IdentifierAndTokenInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		
 		//validate whether to ignore the interceptor
-		HandlerMethod handlerMethod = (HandlerMethod) handler;
+		HandlerMethod handlerMethod = (HandlerMethod) handler;		
 		IgnoreIdentifierAndTokenInterceptor ignoreIdentifierAndTokenInterceptor = handlerMethod.getMethod().getAnnotation(IgnoreIdentifierAndTokenInterceptor.class);
 		if (ignoreIdentifierAndTokenInterceptor != null) return super.preHandle(request, response, handler);
 		
@@ -34,15 +35,17 @@ public class IdentifierAndTokenInterceptor extends HandlerInterceptorAdapter {
 		String authorization = request.getHeader("Authorization");
 		
 		//get identifier in request
-		final Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-		String identifier = pathVariables.get("identifier");
+		Map<String, Object> pathVariables = (Map<String, Object>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+		String identifier = (String) pathVariables.get("identifier");
 		
 		//valid identifier and authorization
 		validateIdentifierAndAuthorizationRequest(authorization, identifier);
 		
 		//get Tokens in srm-login-client-app
 		TokensDTO tokens = getTokens(authorization, identifier);
-		request.setAttribute("tokens", tokens);
+		
+		//set atribute		
+		pathVariables.put("tokens", tokens);
 		
 		return super.preHandle(request, response, handler);
 	}
@@ -63,11 +66,6 @@ public class IdentifierAndTokenInterceptor extends HandlerInterceptorAdapter {
 		authorizationTokenIdentifierDTO.setAuthorizationHB("authorizationHB");
 		authorizationTokenIdentifierDTO.setAuthorizationM18("authorizationM18");
 		return authorizationTokenIdentifierDTO;
-	}
-	
-	public static TokensDTO getTokens(HttpServletRequest request) {
-		TokensDTO tokens = (TokensDTO) request.getAttribute("tokens");
-		return tokens;
 	}
 	
 	@Override
